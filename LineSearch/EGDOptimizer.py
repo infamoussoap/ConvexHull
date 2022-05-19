@@ -37,7 +37,7 @@ class EGDOptimizer:
             grad = (w @ self.points - y) @ self.points.T + l2_grad
 
             t0, t1 = 0, 2 / np.max(abs(grad))
-            learning_rate = search_method.search(w, y, t0, t1)
+            learning_rate = search_method.search(w, y, t0, t1, grad)
 
             x = w * np.exp(-learning_rate * grad)
             w = x / np.sum(x)
@@ -58,5 +58,5 @@ class EGDOptimizer:
         if not verbose:
             return
 
-        sys.stdout.write(f"{count + 1} of {max_iter}: Distance {current_distance}\r")
+        sys.stdout.write(f"{count + 1} of {max_iter}: Distance {current_distance:.5E}\r")
         sys.stdout.flush()
