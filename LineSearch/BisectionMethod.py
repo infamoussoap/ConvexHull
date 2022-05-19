@@ -9,31 +9,39 @@ class BisectionMethod:
         self.tol = tol
         self.max_iter = max_iter
 
-    def search(self, w, y, t0, t1):
-        grad = self.grad(w, y)
-        q_0 = self.merit(w, y, grad, t0)
-        q_1 = self.merit(w, y, grad, t1)
+    def search(self, w, y, t_0, t_1, grad):
+        q_0 = self.merit(w, y, grad, t_0)
+        q_1 = self.merit(w, y, grad, t_1)
 
         for i in range(self.max_iter):
-            t_new = (t0 + t1) / 2
+            t_new = (t_0 + t_1) / 2
             q_new = self.merit(w, y, grad, t_new)
             dq_new = self.merit_grad(w, y, grad, t_new)
 
-            if abs(t0 - t1) < self.resolution:
+            if abs(t_0 - t_1) < self.resolution:
                 break
 
-            if q_new < q_0 and abs(dq_new) < self.tol:
-                return t_new
-            elif q_new < q_0 and dq_new > 0:
-                t_0 = t_new
-                q_0 = q_new
-            elif q_new < q_1 and dq_new < 0:
-                t_1 = t_new
-                q_1 = q_new
-            else:
-                raise ValueError("Non Convex?")
+            if abs(dq_new) < self.tol:
+                break
 
-        return [t_0, t_1, t_new][np.argmin([q_0, q_1, q_new])]
+            if dq_new < 0:
+                # The derivative is approximate, so not always
+                # will be correct
+                if q_new < q_0:
+                    t_0 = t_new
+                    q_0 = q_new
+                else:
+                    break
+            else:
+                if q_new < q_1:
+                     t_1 = t_new
+                     q_1 = q_new
+                else:
+                    break
+
+        val = [t_0, t_1, t_new][np.argmin([q_0, q_1, q_new])]
+        # print(val)
+        return val
 
 
     def cost(self, w, y):
@@ -49,8 +57,19 @@ class BisectionMethod:
 
     def merit_grad(self, w, y, grad, t):
         w_new = self.step(w, grad, t)
+        w_grad = self.w_grad(w, grad, t)
 
-        return (y - w_new @ self.points) @ self.points.T @ (grad * w_new)
+        return (w_new @ self.points - y) @ self.points.T @ w_grad
+
+    @staticmethod
+    def w_grad(w, grad, t):
+        x_new = w * np.exp(-t * grad)
+        gx_new = grad * x_new
+
+        Z = np.sum(x_new)
+        gZ = np.sum(gx_new)
+
+        return (x_new * gZ - gx_new * Z) / (Z ** 2)
 
     @staticmethod
     def step(w, grad, t):
