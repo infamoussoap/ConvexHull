@@ -24,9 +24,8 @@ class EGDOptimizer:
         if search_method is None:
             search_method = BisectionMethod(self.points)
 
-        return self._optimize(y, w, learning_rate, l2_reg, search_method, tol,
+        return self._optimize(y, w, learning_rate, search_method, tol,
                               max_iter, log, verbose)
-
 
     def _optimize(self, y, w, learning_rate, search_method, tol, max_iter,
                   log, verbose):
