@@ -12,7 +12,7 @@ class EGDOptimizer:
         self.log = None
         self.H = None
 
-    def optimize(self, y, w=None, learning_rate=None, l2_reg=0.0,
+    def optimize(self, y, w=None, learning_rate=None,
                  search_method=None, tol=1e-7, max_iter=5000,
                  log=None, verbose=True):
         if log is None:
@@ -28,14 +28,11 @@ class EGDOptimizer:
                               max_iter, log, verbose)
 
 
-    def _optimize(self, y, w, learning_rate, l2_reg, search_method, tol, max_iter,
+    def _optimize(self, y, w, learning_rate, search_method, tol, max_iter,
                   log, verbose):
         current_distance = np.sum((w @ self.points - y) ** 2)
-        grad_squared = 0
         for count in range(max_iter):
-            # Weights are always positive, so only need to check one side
-            l2_grad = l2_reg * w
-            grad = (w @ self.points - y) @ self.points.T + l2_grad
+            grad = (w @ self.points - y) @ self.points.T
 
             t0, t1 = 0, 2 / np.max(abs(grad))
             learning_rate = search_method.search(w, y, t0, t1, grad)
