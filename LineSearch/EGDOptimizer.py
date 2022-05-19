@@ -3,6 +3,7 @@ import sys
 
 from .Log import Log
 from .BisectionMethod import BisectionMethod
+from .KKTConditions import kkt_conditions
 
 
 class EGDOptimizer:
