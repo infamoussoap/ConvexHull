@@ -3,7 +3,7 @@ import sys
 
 from .Log import Log
 from .BisectionMethod import BisectionMethod
-from .KKTConditions import kkt_conditions
+from .KKTConditions import validate_kkt_conditions
 
 
 class EGDOptimizer:
@@ -32,6 +32,8 @@ class EGDOptimizer:
         current_distance = np.sum((w @ self.points - y) ** 2)
         for count in range(max_iter):
             grad = (w @ self.points - y) @ self.points.T
+            if validate_kkt_conditions(w, grad, tol):
+                break
 
             t0, t1 = 0, 2 / np.max(abs(grad))
             learning_rate = search_method.search(w, y, t0, t1, grad)
@@ -39,11 +41,7 @@ class EGDOptimizer:
             x = w * np.exp(-learning_rate * grad)
             w = x / np.sum(x)
 
-            new_distance = np.sum((w @ self.points - y) ** 2)
-            if abs(current_distance - new_distance) < tol:
-                break
-            else:
-                current_distance = new_distance
+            current_distance = np.sum((w @ self.points - y) ** 2)
 
             # Callbacks
             log.log(current_distance=current_distance, w=w)
