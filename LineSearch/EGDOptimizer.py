@@ -38,6 +38,9 @@ class EGDOptimizer:
             t0, t1 = 0, 2 / np.max(abs(grad))
             learning_rate = search_method.search(w, y, t0, t1, grad)
 
+            if learning_rate < 1e-7:  # No more learning to be done
+                break
+
             x = w * np.exp(-learning_rate * grad)
             w = x / np.sum(x)
 
