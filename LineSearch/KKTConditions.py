@@ -13,7 +13,6 @@ def validate_kkt_conditions(w, grad, tol=1e-3):
 
     return False
 
-
 def check_kkt_conditions_for_non_active_set(non_active_grad, tol=1e-3):
     """ KKT conditions for the non-active-set requires that the respective gradients
         are equal
@@ -23,7 +22,6 @@ def check_kkt_conditions_for_non_active_set(non_active_grad, tol=1e-3):
     if len(non_active_grad) == 0:
         # This implies w1,...,wn=0 which violates the KKT condition dL/db = 0
         return False, 0
-
 
     b = np.mean(non_active_grad) # The Lagrange Multiplier
     return np.max(abs(non_active_grad - b)) < tol, -b
