@@ -2,7 +2,7 @@ import numpy as np
 
 
 def validate_kkt_conditions(w, grad, tol=1e-3):
-    non_active_set = w > tol
+    non_active_set = w > 1e-7
 
     non_active_grad = grad[non_active_set]
     active_grad = grad[~non_active_set]
