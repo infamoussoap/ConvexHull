@@ -9,7 +9,7 @@ def validate_kkt_conditions(w, grad, tol=1e-5):
 
     valid, b = check_kkt_conditions_for_non_active_set(non_active_grad, tol=tol)
     if valid:
-        return check_kkt_conditions_for_active_set(active_grad, b, tol=1e-5)
+        return check_kkt_conditions_for_active_set(active_grad, b, tol=tol)
 
     return False
 
@@ -22,7 +22,7 @@ def check_kkt_conditions_for_non_active_set(non_active_grad, tol=1e-5):
     """
     if len(non_active_grad) == 0:
         # This implies w1,...,wn=0 which violates the KKT condition dL/db = 0
-        return False
+        return False, 0
 
 
     b = np.mean(non_active_grad) # The Lagrange Multiplier
