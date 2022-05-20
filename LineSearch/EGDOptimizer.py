@@ -59,6 +59,10 @@ class EGDOptimizer:
         if status is None:
             status = "failed"
 
+        if verbose:
+            sys.stdout.write("\n")
+            sys.stdout.flush()
+
         return status, log, w
 
     def verbose_callback(self, verbose, current_distance, count, max_iter):
