@@ -13,7 +13,7 @@ class EGDOptimizer:
         self.H = None
 
     def optimize(self, y, w=None, learning_rate=None,
-                 search_method=None, tol=1e-3, max_iter=5000,
+                 search_type=None, tol=1e-3, max_iter=5000,
                  log=None, verbose=True):
         if log is None:
             log = Log()
@@ -21,14 +21,15 @@ class EGDOptimizer:
         if w is None:
             w = np.ones(len(self.points)) / len(self.points)
 
-        if search_method is None:
-            search_method = BisectionMethod(self.points)
+        if search_type is None:
+            search_type = 'classical'
 
-        return self._optimize(y, w, learning_rate, search_method, tol,
+        return self._optimize(y, w, learning_rate, search_type, tol,
                               max_iter, log, verbose)
 
-    def _optimize(self, y, w, learning_rate, search_method, tol, max_iter,
+    def _optimize(self, y, w, learning_rate, search_type, tol, max_iter,
                   log, verbose):
+        search_method = BisectionMethod(self.points)
 
         status = None
         current_distance = np.sum((w @ self.points - y) ** 2)
@@ -39,8 +40,8 @@ class EGDOptimizer:
                 break
 
             # t0, t1 = 0, 2 / np.max(abs(grad))
-            t0, t1 = 0, 2 * (count + 1)
-            learning_rate = search_method.search(w, y, t0, t1, grad)
+            t_max = 2 * (count + 1)
+            learning_rate = search_method.search(w, y, t_max, grad, search_type=search_type)
 
             if learning_rate < 1e-7:  # No more learning to be done
                 status = 'gradient'
@@ -64,5 +65,5 @@ class EGDOptimizer:
         if not verbose:
             return
 
-        sys.stdout.write(f"{count + 1} of {max_iter}: Distance {current_distance:.5E}\r")
+        sys.stdout.write(f"\r{count + 1} of {max_iter}: Distance {current_distance:.5E}")
         sys.stdout.flush()
