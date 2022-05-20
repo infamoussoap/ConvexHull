@@ -13,7 +13,7 @@ class EGDOptimizer:
         self.H = None
 
     def optimize(self, y, w=None, learning_rate=None,
-                 search_method=None, tol=1e-7, max_iter=5000,
+                 search_method=None, tol=1e-3, max_iter=5000,
                  log=None, verbose=True):
         if log is None:
             log = Log()

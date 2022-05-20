@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def validate_kkt_conditions(w, grad, tol=1e-5):
+def validate_kkt_conditions(w, grad, tol=1e-3):
     non_active_set = w > tol
 
     non_active_grad = grad[non_active_set]
@@ -14,7 +14,7 @@ def validate_kkt_conditions(w, grad, tol=1e-5):
     return False
 
 
-def check_kkt_conditions_for_non_active_set(non_active_grad, tol=1e-5):
+def check_kkt_conditions_for_non_active_set(non_active_grad, tol=1e-3):
     """ KKT conditions for the non-active-set requires that the respective gradients
         are equal
 
@@ -28,7 +28,7 @@ def check_kkt_conditions_for_non_active_set(non_active_grad, tol=1e-5):
     b = np.mean(non_active_grad) # The Lagrange Multiplier
     return np.max(abs(non_active_grad - b)) < tol, -b
 
-def check_kkt_conditions_for_active_set(active_grad, b, tol=1e-5):
+def check_kkt_conditions_for_active_set(active_grad, b, tol=1e-3):
     """ KKT conditions for the active set requires that the respective
         gradients + b > 0, where b is the lagrange multipler computed from the
         non active set,
