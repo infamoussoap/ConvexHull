@@ -20,6 +20,10 @@ def check_kkt_conditions_for_non_active_set(non_active_grad, tol=1e-5):
 
         Note: Can probably make this faster by using the single pass variance
     """
+    if len(non_active_grad) == 0:
+        # This implies w1,...,wn=0 which violates the KKT condition dL/db = 0
+        return False
+
 
     b = np.mean(non_active_grad) # The Lagrange Multiplier
     return np.max(abs(non_active_grad - b)) < tol, -b
@@ -27,6 +31,11 @@ def check_kkt_conditions_for_non_active_set(non_active_grad, tol=1e-5):
 def check_kkt_conditions_for_active_set(active_grad, b, tol=1e-5):
     """ KKT conditions for the active set requires that the respective
         gradients + b > 0, where b is the lagrange multipler computed from the
-        non active set, 
+        non active set,
     """
+    if len(active_grad) == 0:
+        # The assumption is that the kkt conditions is valid for the
+        # non-active-set. As such all the lagrange multipliers are satisfied
+        return True
+
     return np.all((active_grad + b) > -tol)
