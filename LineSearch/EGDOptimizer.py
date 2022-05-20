@@ -29,16 +29,21 @@ class EGDOptimizer:
 
     def _optimize(self, y, w, learning_rate, search_method, tol, max_iter,
                   log, verbose):
+
+        status = None
         current_distance = np.sum((w @ self.points - y) ** 2)
         for count in range(max_iter):
             grad = (w @ self.points - y) @ self.points.T
             if validate_kkt_conditions(w, grad, tol):
+                status = 'KKT'
                 break
 
-            t0, t1 = 0, 2 / np.max(abs(grad))
+            # t0, t1 = 0, 2 / np.max(abs(grad))
+            t0, t1 = 0, 2 * (count + 1)
             learning_rate = search_method.search(w, y, t0, t1, grad)
 
             if learning_rate < 1e-7:  # No more learning to be done
+                status = 'gradient'
                 break
 
             x = w * np.exp(-learning_rate * grad)
@@ -50,7 +55,10 @@ class EGDOptimizer:
             log.log(current_distance=current_distance, w=w)
             self.verbose_callback(verbose, current_distance, count, max_iter)
 
-        return log, w
+        if status is None:
+            status = "failed"
+
+        return status, log, w
 
     def verbose_callback(self, verbose, current_distance, count, max_iter):
         if not verbose:

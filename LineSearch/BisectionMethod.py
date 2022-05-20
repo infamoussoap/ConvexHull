@@ -9,40 +9,31 @@ class BisectionMethod:
         self.tol = tol
         self.max_iter = max_iter
 
-    def search(self, w, y, t_0, t_1, grad):
-        q_0 = self.merit(w, y, grad, t_0)
-        q_1 = self.merit(w, y, grad, t_1)
+    def search(self, w, y, t_0, t_1, grad, search_type='classical', **search_kwargs):
+        if search_type == 'classical':
+            return self._classical_search(w, y, t_max, grad, max_iter, **search_kwargs)
 
-        for i in range(self.max_iter):
-            t_new = (t_0 + t_1) / 2
+        raise ValueError(f"{search_type} invalid.")
+
+    def _classical_search(self, w, y, t_max, grad, max_iter, e=1e-5):
+        q_0 = self.merit(w, y, grad, 0)
+
+        t_left = 0
+        t_right = t_max
+
+        for i in range(max_iter):
+            t_new = (t_left + t_right) / 2
             q_new = self.merit(w, y, grad, t_new)
             dq_new = self.merit_grad(w, y, grad, t_new)
 
-            if abs(t_0 - t_1) < self.resolution:
-                break
-
-            if abs(dq_new) < self.tol:
-                break
-
-            if dq_new < 0:
-                # The derivative is approximate, so not always
-                # will be correct
-                if q_new < q_0:
-                    t_0 = t_new
-                    q_0 = q_new
-                else:
-                    break
+            if q_new < q_0 and abs(dq_new) <= e:
+                return t_new
+            elif q_new >= q_0 or dq_new > e:
+                t_right = t_new
             else:
-                if q_new < q_1:
-                     t_1 = t_new
-                     q_1 = q_new
-                else:
-                    break
+                t_left = t_new
 
-        val = [t_0, t_1, t_new][np.argmin([q_0, q_1, q_new])]
-        # print(val)
-        return val
-
+        return [0, t_left, t_right][np.argmin([q_0, q_left, q_right])]
 
     def cost(self, w, y):
         return np.sum((w @ self.points - y) ** 2)
@@ -63,7 +54,8 @@ class BisectionMethod:
 
     @staticmethod
     def w_grad(w, grad, t):
-        x_new = w * np.exp(-t * grad)
+        z = -t * grad
+        x_new = w * np.exp(z - np.max(z))
         gx_new = grad * x_new
 
         Z = np.sum(x_new)
@@ -73,5 +65,6 @@ class BisectionMethod:
 
     @staticmethod
     def step(w, grad, t):
-        x_new = w * np.exp(-t * grad)
+        z = -t * grad
+        x_new = w * np.exp(z - np.max(z))  # For numerical stability
         return x_new / np.sum(x_new)
