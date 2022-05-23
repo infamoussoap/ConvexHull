@@ -10,8 +10,8 @@ class SquaredOptimizer:
         self.points = points
         self.log = None
 
-    def optimize(self, y, learning_rate='cauchy', w=None, kkt_tol=1e-3, max_iter=5000,
-                 log=None, verbose=True, log_weights=True):
+    def optimize(self, y, learning_rate='cauchy', w=None, kkt_tol=1e-3, max_iter=1000,
+                 log=None, verbose=True, log_weights=False):
         if log is None:
             log = Log()
 
