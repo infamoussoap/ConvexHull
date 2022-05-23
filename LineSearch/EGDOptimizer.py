@@ -54,9 +54,9 @@ class EGDOptimizer:
 
             # Callbacks
             if log_weights:
-                log.log(distance=current_distance, w=w)
+                log.log(distance=current_distance, w=w, learning_rate=learning_rate)
             else:
-                log.log(distance=current_distance)
+                log.log(distance=current_distance, learning_rate=learning_rate)
 
             self.verbose_callback(verbose, current_distance, count, max_iter)
 
