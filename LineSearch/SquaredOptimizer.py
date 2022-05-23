@@ -32,21 +32,18 @@ class SquaredOptimizer:
 
             dw_dt = w * (grad - w @ grad)
             if learning_rate == 'cauchy':
-                mask = dw_dt > 0
-                max_learning_rate = np.min(w[mask] / dw_dt[mask])
+                mask = dw_dt > 1e-8
+                if np.any(mask):  # Check non-empty
+                    max_learning_rate = np.min(w[mask] / dw_dt[mask])
 
-                cauchy_learning_rate_ = dw_dt @ grad / np.sum((dw_dt @ self.points) ** 2)
-
-                learning_rate_ = min(cauchy_learning_rate_, max_learning_rate)
-
-                # if learning_rate_ == max_learning_rate:
-                #     print(f"Bounding Learning Rate {count}: {max_learning_rate} from {cauchy_learning_rate_}")
+                    cauchy_learning_rate_ = dw_dt @ grad / np.sum((dw_dt @ self.points) ** 2)
+                    learning_rate_ = min(cauchy_learning_rate_, max_learning_rate)
 
             else:
                 learning_rate_ = learning_rate
 
             w = w - learning_rate_ * dw_dt
-            assert np.all(w > -1e-7), 'negative values not allowed'
+            assert np.all(w > -1e-8), 'negative values not allowed'
             w = w / np.sum(w)
 
             current_distance = np.sum((w @ self.points - y) ** 2)
