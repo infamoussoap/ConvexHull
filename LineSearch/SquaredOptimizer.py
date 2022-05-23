@@ -11,7 +11,7 @@ class SquaredOptimizer:
         self.log = None
 
     def optimize(self, y, learning_rate='cauchy', w=None, kkt_tol=1e-3, max_iter=1000,
-                 log=None, verbose=True, log_weights=False):
+                 log=None, verbose=True, log_weights=False, tol=1e-8):
         if log is None:
             log = Log()
 
@@ -32,7 +32,7 @@ class SquaredOptimizer:
 
             dw_dt = w * (grad - w @ grad)
             if learning_rate == 'cauchy':
-                mask = dw_dt > 1e-8
+                mask = dw_dt > tol
                 if np.any(mask):  # Check non-empty
                     max_learning_rate = np.min(w[mask] / dw_dt[mask])
 
@@ -43,7 +43,7 @@ class SquaredOptimizer:
                 learning_rate_ = learning_rate
 
             w = w - learning_rate_ * dw_dt
-            assert np.all(w > -1e-8), 'negative values not allowed'
+            assert np.all(w > -tol), 'negative values not allowed'
             w = w / np.sum(w)
 
             current_distance = np.sum((w @ self.points - y) ** 2)
