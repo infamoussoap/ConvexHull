@@ -18,9 +18,9 @@ class SquaredOptimizer:
         if w is None:
             w = np.ones(len(self.points)) / len(self.points)
 
-        return self._optimize(y, w, kkt_tol, max_iter, log, verbose, log_weights)
+        return self._optimize(y, w, kkt_tol, max_iter, log, verbose, log_weights, tol)
 
-    def _optimize(self, y, w, kkt_tol, max_iter, log, verbose, log_weights):
+    def _optimize(self, y, w, kkt_tol, max_iter, log, verbose, log_weights, tol):
         status = None
         current_distance = np.sum((w @ self.points - y) ** 2)
 
@@ -40,16 +40,16 @@ class SquaredOptimizer:
             else:
                 learning_rate = cauchy_learning_rate
 
-            w = w - learning_rate_ * dw_dt
+            w = w - learning_rate * dw_dt
             w = w / np.sum(w)
 
             current_distance = np.sum((w @ self.points - y) ** 2)
 
             # Callbacks
             if log_weights:
-                log.log(distance=current_distance, w=w, learning_rate=learning_rate_)
+                log.log(distance=current_distance, w=w, learning_rate=learning_rate)
             else:
-                log.log(distance=current_distance, learning_rate=learning_rate_)
+                log.log(distance=current_distance, learning_rate=learning_rate)
             self.verbose_callback(verbose, current_distance, count, max_iter)
 
         if status is None:
