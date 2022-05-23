@@ -10,7 +10,7 @@ class SquaredOptimizer:
         self.points = points
         self.log = None
 
-    def optimize(self, y, learning_rate='cauchy', w=None, kkt_tol=1e-3, max_iter=1000,
+    def optimize(self, y, w=None, kkt_tol=1e-3, max_iter=1000,
                  log=None, verbose=True, log_weights=False, tol=1e-8):
         if log is None:
             log = Log()
@@ -18,9 +18,9 @@ class SquaredOptimizer:
         if w is None:
             w = np.ones(len(self.points)) / len(self.points)
 
-        return self._optimize(y, learning_rate, w, kkt_tol, max_iter, log, verbose, log_weights)
+        return self._optimize(y, w, kkt_tol, max_iter, log, verbose, log_weights)
 
-    def _optimize(self, y, learning_rate, w, kkt_tol, max_iter, log, verbose, log_weights):
+    def _optimize(self, y, w, kkt_tol, max_iter, log, verbose, log_weights):
         status = None
         current_distance = np.sum((w @ self.points - y) ** 2)
 
@@ -31,19 +31,16 @@ class SquaredOptimizer:
                 break
 
             dw_dt = w * (grad - w @ grad)
-            if learning_rate == 'cauchy':
-                mask = dw_dt > tol
-                if np.any(mask):  # Check non-empty
-                    max_learning_rate = np.min(w[mask] / dw_dt[mask])
+            cauchy_learning_rate = dw_dt @ grad / np.sum((dw_dt @ self.points) ** 2)
 
-                    cauchy_learning_rate_ = dw_dt @ grad / np.sum((dw_dt @ self.points) ** 2)
-                    learning_rate_ = min(cauchy_learning_rate_, max_learning_rate)
-
+            mask = dw_dt > tol
+            if np.any(mask):  # Check non-empty
+                max_learning_rate = np.min(w[mask] / dw_dt[mask])
+                learning_rate = min(cauchy_learning_rate, max_learning_rate)
             else:
-                learning_rate_ = learning_rate
+                learning_rate = cauchy_learning_rate
 
             w = w - learning_rate_ * dw_dt
-            assert np.all(w > -tol), 'negative values not allowed'
             w = w / np.sum(w)
 
             current_distance = np.sum((w @ self.points - y) ** 2)
