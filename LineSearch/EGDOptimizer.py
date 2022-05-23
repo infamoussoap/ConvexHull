@@ -13,7 +13,7 @@ class EGDOptimizer:
         self.H = None
 
     def optimize(self, y, w=None, learning_rate=None,
-                 search_type=None, tol=1e-3, max_iter=5000,
+                 search_type=None, kkt_tol=1e-3, max_iter=5000,
                  log=None, verbose=True, log_weights=False):
         if log is None:
             log = Log()
@@ -24,10 +24,10 @@ class EGDOptimizer:
         if search_type is None:
             search_type = 'classical'
 
-        return self._optimize(y, w, learning_rate, search_type, tol,
+        return self._optimize(y, w, learning_rate, search_type, kkt_tol,
                               max_iter, log, verbose, log_weights)
 
-    def _optimize(self, y, w, learning_rate, search_type, tol, max_iter,
+    def _optimize(self, y, w, learning_rate, search_type, kkt_tol, max_iter,
                   log, verbose, log_weights):
         search_method = BisectionMethod(self.points)
 
@@ -35,7 +35,7 @@ class EGDOptimizer:
         current_distance = np.sum((w @ self.points - y) ** 2)
         for count in range(max_iter):
             grad = (w @ self.points - y) @ self.points.T
-            if validate_kkt_conditions(w, grad, tol):
+            if validate_kkt_conditions(w, grad, kkt_tol):
                 status = 'KKT'
                 break
 

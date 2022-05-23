@@ -10,7 +10,7 @@ class SquaredOptimizer:
         self.points = points
         self.log = None
 
-    def optimize(self, y, learning_rate='cauchy', w=None, tol=1e-3, max_iter=5000,
+    def optimize(self, y, learning_rate='cauchy', w=None, kkt_tol=1e-3, max_iter=5000,
                  log=None, verbose=True, log_weights=True):
         if log is None:
             log = Log()
@@ -18,15 +18,15 @@ class SquaredOptimizer:
         if w is None:
             w = np.ones(len(self.points)) / len(self.points)
 
-        return self._optimize(y, learning_rate, w, tol, max_iter, log, verbose, log_weights)
+        return self._optimize(y, learning_rate, w, kkt_tol, max_iter, log, verbose, log_weights)
 
-    def _optimize(self, y, learning_rate, w, tol, max_iter, log, verbose, log_weights):
+    def _optimize(self, y, learning_rate, w, kkt_tol, max_iter, log, verbose, log_weights):
         status = None
         current_distance = np.sum((w @ self.points - y) ** 2)
 
         for count in range(max_iter):
             grad = (w @ self.points - y) @ self.points.T
-            if validate_kkt_conditions(w, grad, tol):
+            if validate_kkt_conditions(w, grad, kkt_tol):
                 status = 'KKT'
                 break
 
