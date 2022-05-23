@@ -14,7 +14,7 @@ class EGDOptimizer:
 
     def optimize(self, y, w=None, learning_rate=None,
                  search_type=None, tol=1e-3, max_iter=5000,
-                 log=None, verbose=True):
+                 log=None, verbose=True, log_weights=False):
         if log is None:
             log = Log()
 
@@ -25,10 +25,10 @@ class EGDOptimizer:
             search_type = 'classical'
 
         return self._optimize(y, w, learning_rate, search_type, tol,
-                              max_iter, log, verbose)
+                              max_iter, log, verbose, log_weights)
 
     def _optimize(self, y, w, learning_rate, search_type, tol, max_iter,
-                  log, verbose):
+                  log, verbose, log_weights):
         search_method = BisectionMethod(self.points)
 
         status = None
@@ -53,7 +53,11 @@ class EGDOptimizer:
             current_distance = np.sum((w @ self.points - y) ** 2)
 
             # Callbacks
-            log.log(current_distance=current_distance, w=w)
+            if log_weights:
+                log.log(distance=current_distance, w=w)
+            else:
+                log.log(distance=current_distance)
+
             self.verbose_callback(verbose, current_distance, count, max_iter)
 
         if status is None:
