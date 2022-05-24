@@ -57,3 +57,37 @@ def egd_optimizer(points, y, kkt_tol=1e-3, max_iter=1000):
     distance = np.sum((w @ points - y) ** 2)
 
     return status, distance, count + 1, w
+
+
+def pgd_optimizer(points, y, kkt_tol=1e-3, max_iter=1000):
+    w = np.ones(len(points)) / len(points)
+    status = 'Failed'
+
+    for count in range(max_iter):
+        grad = (w @ points - y) @ points.T
+        if validate_kkt_conditions(w, grad, kkt_tol):
+            status = 'KKT'
+            break
+
+        learning_rate = grad @ grad / np.sum((grad @ points) ** 2)
+        x = w - learning_rate * grad
+        w = project_onto_standard_simplex(x)
+
+    distance = np.sum((w @ points - y) ** 2)
+
+    return status, distance, count + 1, w
+
+
+def project_onto_standard_simplex(y):
+    """ https://gist.github.com/mgritter/4bf003cd399da2e57096af1050d64ddd """
+    n = len(y)
+    y_s = sorted(y, reverse=True)
+
+    sum_y = 0
+    for i, y_i, y_next in zip(range(1, n+1), y_s, y_s[1:] + [0.0]):
+        sum_y += y_i
+        t = (sum_y - 1) / i
+        if t >= y_next:
+            break
+
+    return np.maximum(0, y - t)
