@@ -21,7 +21,7 @@ class SquaredOptimizer:
         return self._optimize(y, w, kkt_tol, max_iter, log, verbose, log_weights, tol)
 
     def _optimize(self, y, w, kkt_tol, max_iter, log, verbose, log_weights, tol):
-        status = None
+        status = 'Failed'
         current_distance = np.sum((w @ self.points - y) ** 2)
 
         for count in range(max_iter):
@@ -51,9 +51,6 @@ class SquaredOptimizer:
             else:
                 log.log(distance=current_distance, learning_rate=learning_rate)
             self.verbose_callback(verbose, current_distance, count, max_iter)
-
-        if status is None:
-            status = "failed"
 
         if verbose:
             sys.stdout.write("\n")
