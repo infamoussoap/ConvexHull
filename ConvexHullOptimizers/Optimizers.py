@@ -1,10 +1,13 @@
 import numpy as np
+import sys
 
 from .KKTConditions import validate_kkt_conditions
 from .BisectionMethod import BisectionMethod
 
+from .utils import project_onto_standard_simplex, verbose_callback
 
-def squared_optimizer(points, y, kkt_tol=1e-3, max_iter=1000, tol=1e-8):
+
+def squared_optimizer(points, y, kkt_tol=1e-3, max_iter=1000, verbose=False):
     w = np.ones(len(points)) / len(points)
     status = 'Failed'
 
@@ -23,12 +26,19 @@ def squared_optimizer(points, y, kkt_tol=1e-3, max_iter=1000, tol=1e-8):
         w = w - learning_rate * dw_dt
         w = w / np.sum(w)
 
+        if verbose:
+            verbose_callback(count, max_iter, w, points, y)
+
     distance = np.sum((w @ points - y) ** 2)
+
+    if verbose:
+        sys.stdout.write('\n')
+        sys.stdout.flush()
 
     return status, distance, count + 1, w
 
 
-def egd_optimizer(points, y, kkt_tol=1e-3, max_iter=1000):
+def egd_optimizer(points, y, kkt_tol=1e-3, max_iter=1000, verbose=False):
     search_method = BisectionMethod(points)
 
     w = np.ones(len(points)) / len(points)
@@ -50,12 +60,19 @@ def egd_optimizer(points, y, kkt_tol=1e-3, max_iter=1000):
         x = w * np.exp(-learning_rate * grad)
         w = x / np.sum(x)
 
+        if verbose:
+            verbose_callback(count, max_iter, w, points, y)
+
     distance = np.sum((w @ points - y) ** 2)
+
+    if verbose:
+        sys.stdout.write('\n')
+        sys.stdout.flush()
 
     return status, distance, count + 1, w
 
 
-def pgd_optimizer(points, y, kkt_tol=1e-3, max_iter=1000):
+def pgd_optimizer(points, y, kkt_tol=1e-3, max_iter=1000, verbose=False):
     w = np.ones(len(points)) / len(points)
     status = 'Failed'
 
@@ -69,21 +86,13 @@ def pgd_optimizer(points, y, kkt_tol=1e-3, max_iter=1000):
         x = w - learning_rate * grad
         w = project_onto_standard_simplex(x)
 
+        if verbose:
+            verbose_callback(count, max_iter, w, points, y)
+
     distance = np.sum((w @ points - y) ** 2)
 
+    if verbose:
+        sys.stdout.write('\n')
+        sys.stdout.flush()
+
     return status, distance, count + 1, w
-
-
-def project_onto_standard_simplex(y):
-    """ https://gist.github.com/mgritter/4bf003cd399da2e57096af1050d64ddd """
-    n = len(y)
-    y_s = sorted(y, reverse=True)
-
-    sum_y = 0
-    for i, y_i, y_next in zip(range(1, n+1), y_s, y_s[1:] + [0.0]):
-        sum_y += y_i
-        t = (sum_y - 1) / i
-        if t >= y_next:
-            break
-
-    return np.maximum(0, y - t)
