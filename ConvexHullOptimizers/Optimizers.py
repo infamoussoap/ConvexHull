@@ -50,7 +50,7 @@ def egd_optimizer(points, y, kkt_tol=1e-3, max_iter=1000, verbose=False):
             status = 'KKT'
             break
 
-        t_max = 2 * (count + 1)
+        t_max = min(2 * (count + 1), 1000)
         learning_rate = search_method.search(w, y, t_max, grad, search_type='classical')
 
         if learning_rate < 1e-7:  # No more learning to be done
