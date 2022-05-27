@@ -24,7 +24,8 @@ def check_kkt_conditions_for_non_active_set(non_active_grad, tol=1e-3):
         return False, 0
 
     b = np.mean(non_active_grad) # The Lagrange Multiplier
-    return np.max(abs(non_active_grad - b)) < tol, -b
+    max_, min_ = np.max(non_active_grad), np.min(non_active_grad)
+    return abs(max_ - min_) < tol, -b
 
 def check_kkt_conditions_for_active_set(active_grad, b, tol=1e-3):
     """ KKT conditions for the active set requires that the respective
