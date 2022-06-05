@@ -7,11 +7,12 @@ from .BisectionMethod import BisectionMethod
 from .utils import project_onto_standard_simplex, verbose_callback
 
 
-def squared_optimizer(points, y, kkt_tol=1e-3, max_iter=1000, verbose=False):
+def squared_optimizer(points, y, kkt_tol=1e-3, max_iter=-1, verbose=False):
     w = np.ones(len(points)) / len(points)
     status = 'Failed'
 
-    for count in range(max_iter):
+    count = 0
+    while count < max_iter or max_iter < 0:
         grad = (w @ points - y) @ points.T
         if validate_kkt_conditions(w, grad, kkt_tol):
             status = 'KKT'
@@ -29,6 +30,8 @@ def squared_optimizer(points, y, kkt_tol=1e-3, max_iter=1000, verbose=False):
         if verbose:
             verbose_callback(count, max_iter, w, points, y)
 
+        count += 1
+
     distance = np.sum((w @ points - y) ** 2)
 
     if verbose:
@@ -38,13 +41,14 @@ def squared_optimizer(points, y, kkt_tol=1e-3, max_iter=1000, verbose=False):
     return status, distance, count + 1, w
 
 
-def egd_optimizer(points, y, kkt_tol=1e-3, max_iter=1000, verbose=False):
+def egd_optimizer(points, y, kkt_tol=1e-3, max_iter=-1, verbose=False):
     search_method = BisectionMethod(points)
 
     w = np.ones(len(points)) / len(points)
     status = 'Failed'
 
-    for count in range(max_iter):
+    count = 0
+    while count < max_iter or max_iter < 0:
         grad = (w @ points - y) @ points.T
         if validate_kkt_conditions(w, grad, kkt_tol):
             status = 'KKT'
@@ -63,6 +67,8 @@ def egd_optimizer(points, y, kkt_tol=1e-3, max_iter=1000, verbose=False):
         if verbose:
             verbose_callback(count, max_iter, w, points, y)
 
+        count += 1
+
     distance = np.sum((w @ points - y) ** 2)
 
     if verbose:
@@ -72,11 +78,12 @@ def egd_optimizer(points, y, kkt_tol=1e-3, max_iter=1000, verbose=False):
     return status, distance, count + 1, w
 
 
-def pgd_optimizer(points, y, kkt_tol=1e-3, max_iter=1000, verbose=False):
+def pgd_optimizer(points, y, kkt_tol=1e-3, max_iter=-1, verbose=False):
     w = np.ones(len(points)) / len(points)
     status = 'Failed'
 
-    for count in range(max_iter):
+    count = 0
+    while count < max_iter or max_iter < 0:
         grad = (w @ points - y) @ points.T
         if validate_kkt_conditions(w, grad, kkt_tol):
             status = 'KKT'
@@ -88,6 +95,8 @@ def pgd_optimizer(points, y, kkt_tol=1e-3, max_iter=1000, verbose=False):
 
         if verbose:
             verbose_callback(count, max_iter, w, points, y)
+
+        count += 1
 
     distance = np.sum((w @ points - y) ** 2)
 

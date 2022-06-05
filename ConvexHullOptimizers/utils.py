@@ -5,7 +5,11 @@ import sys
 def verbose_callback(count, max_iter, w, points, y):
     distance = np.sum((w @ points - y) ** 2)
 
-    sys.stdout.write(f'\rIter {count + 1} of {max_iter}: Distance to Hull: {distance:.5e}')
+    if max_iter > 0:
+        sys.stdout.write(f'\rIter {count + 1} of {max_iter}: Distance to Hull: {distance:.5e}')
+    else:
+        sys.stdout.write(f'\rIter {count + 1}: Distance to Hull: {distance:.5e}')
+
     sys.stdout.flush()
 
 
