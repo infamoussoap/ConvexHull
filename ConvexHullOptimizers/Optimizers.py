@@ -7,8 +7,12 @@ from .BisectionMethod import BisectionMethod
 from .utils import project_onto_standard_simplex, verbose_callback
 
 
-def squared_optimizer(points, y, kkt_tol=1e-3, max_iter=-1, verbose=False):
-    w = np.ones(len(points)) / len(points)
+def squared_optimizer(points, y, kkt_tol=1e-3, max_iter=-1, verbose=False, w=None):
+    if w is None:
+        w = np.ones(len(points)) / len(points)
+    else:
+        assert abs(np.sum(w) - 1) < 1e-10, "w must sum to 1"
+
     status = 'Failed'
 
     count = 0
@@ -41,10 +45,13 @@ def squared_optimizer(points, y, kkt_tol=1e-3, max_iter=-1, verbose=False):
     return status, distance, count + 1, w
 
 
-def egd_optimizer(points, y, kkt_tol=1e-3, max_iter=-1, verbose=False):
-    search_method = BisectionMethod(points)
+def egd_optimizer(points, y, kkt_tol=1e-3, max_iter=-1, verbose=False, w=None):
+    if w is None:
+        w = np.ones(len(points)) / len(points)
+    else:
+        assert abs(np.sum(w) - 1) < 1e-10, "w must sum to 1"
 
-    w = np.ones(len(points)) / len(points)
+    search_method = BisectionMethod(points)
     status = 'Failed'
 
     count = 0
@@ -78,8 +85,12 @@ def egd_optimizer(points, y, kkt_tol=1e-3, max_iter=-1, verbose=False):
     return status, distance, count + 1, w
 
 
-def pgd_optimizer(points, y, kkt_tol=1e-3, max_iter=-1, verbose=False):
-    w = np.ones(len(points)) / len(points)
+def pgd_optimizer(points, y, kkt_tol=1e-3, max_iter=-1, verbose=False, w=None):
+    if w is None:
+        w = np.ones(len(points)) / len(points)
+    else:
+        assert abs(np.sum(w) - 1) < 1e-10, "w must sum to 1"
+
     status = 'Failed'
 
     count = 0
