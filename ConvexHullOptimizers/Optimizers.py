@@ -12,6 +12,7 @@ def squared_optimizer(points, y, kkt_tol=1e-3, max_iter=-1, verbose=False, w=Non
         w = np.ones(len(points)) / len(points)
     else:
         assert abs(np.sum(w) - 1) < 1e-10, "w must sum to 1"
+        assert len(w) == len(points), "Length of w must be the same length as the hull"
 
     status = 'Failed'
 
@@ -50,6 +51,7 @@ def egd_optimizer(points, y, kkt_tol=1e-3, max_iter=-1, verbose=False, w=None):
         w = np.ones(len(points)) / len(points)
     else:
         assert abs(np.sum(w) - 1) < 1e-10, "w must sum to 1"
+        assert len(w) == len(points), "Length of w must be the same length as the hull"
 
     search_method = BisectionMethod(points)
     status = 'Failed'
@@ -90,6 +92,7 @@ def pgd_optimizer(points, y, kkt_tol=1e-3, max_iter=-1, verbose=False, w=None):
         w = np.ones(len(points)) / len(points)
     else:
         assert abs(np.sum(w) - 1) < 1e-10, "w must sum to 1"
+        assert len(w) == len(points), "Length of w must be the same length as the hull"
 
     status = 'Failed'
 
