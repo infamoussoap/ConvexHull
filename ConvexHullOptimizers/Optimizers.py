@@ -26,10 +26,18 @@ def squared_optimizer(points, y, kkt_tol=1e-3, max_iter=-1, verbose=False, w=Non
         dw_dt = w * (grad - w @ grad)
         cauchy_learning_rate = dw_dt @ grad / np.sum((dw_dt @ points) ** 2)
 
-        max_learning_rate = 1 / (np.max(grad) - w @ grad)
+        masked_grad = grad * non_active_set
+        i = np.argmax(masked_grad)
+
+        max_learning_rate = 1 / (masked_grad[i] - w @ grad)
         learning_rate = min(cauchy_learning_rate, max_learning_rate)
 
         w = w - learning_rate * dw_dt
+
+        if learning_rate == max_learning_rate:
+            non_active_set[i] = 0
+            w[i] = 0
+
         w = w / np.sum(w)
 
         if verbose:
