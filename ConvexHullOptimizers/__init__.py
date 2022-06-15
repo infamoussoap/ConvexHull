@@ -1,3 +1,3 @@
 from .SquaredOptimizer import squared_optimizer
-from .Optimizers import egd_optimizer
-from .Optimizers import pgd_optimizer
+from .EGDOptimizer import egd_optimizer
+from .PGDOptimizer import pgd_optimizer
