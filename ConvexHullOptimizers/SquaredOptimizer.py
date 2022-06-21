@@ -14,12 +14,10 @@ def squared_optimizer(points, y, tol=1e-8, max_iter=-1, verbose=False, w=None, r
 
     original_length = len(w)
 
-    tape = Tape(tol)
-
     current_iter = 0
     non_active_set = np.arange(len(w))
     status, distance, current_iter, w = _squared_optimizer(points, y, tol, current_iter, max_iter,
-                                                           verbose, w, reset_optimizer, tape)
+                                                           verbose, w, reset_optimizer)
 
     while status == 'reset':
         non_zero_mask = w != 0
@@ -29,7 +27,7 @@ def squared_optimizer(points, y, tol=1e-8, max_iter=-1, verbose=False, w=None, r
         points = points[non_zero_mask]
 
         status, distance, current_iter, w = _squared_optimizer(points, y, tol, current_iter, max_iter,
-                                                               verbose, w, reset_optimizer, tape)
+                                                               verbose, w, reset_optimizer)
 
     if verbose:
         sys.stdout.write('\n')
@@ -43,9 +41,11 @@ def squared_optimizer(points, y, tol=1e-8, max_iter=-1, verbose=False, w=None, r
     return status, distance, current_iter + 1, w
 
 
-def _squared_optimizer(points, y, tol, current_iter, max_iter, verbose, w, reset_optimizer, tape):
+def _squared_optimizer(points, y, tol, current_iter, max_iter, verbose, w, reset_optimizer):
     non_active_set = np.ones(len(w))
     active_set_length = 0
+
+    tape = Tape(tol)
 
     status = 'Failed'
 
