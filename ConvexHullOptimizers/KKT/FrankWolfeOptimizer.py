@@ -15,7 +15,7 @@ def clip(x, min_val, max_val):
     return x
 
 
-def frank_wolfe_optimizer(points, y, kkt_tol=1e-3, max_iter=-1, verbose=False, w=None, tol=1e-10):
+def frank_wolfe_optimizer(points, y, kkt_tol=1e-3, max_iter=-1, verbose=False, w=None, e=1e-10):
     if w is None:
         w = np.zeros(len(points))
         w[0] = 1
@@ -40,7 +40,7 @@ def frank_wolfe_optimizer(points, y, kkt_tol=1e-3, max_iter=-1, verbose=False, w
         a = (oracle - w) @ points
         gamma = - (a @ b) / (a @ a)
 
-        if gamma < tol:
+        if gamma < e:
             break
 
         gamma = clip(gamma, 0, 1)

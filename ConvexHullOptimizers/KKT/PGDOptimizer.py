@@ -7,7 +7,7 @@ from ..utils import verbose_callback
 
 
 def pgd_optimizer(points, y, kkt_tol=1e-3, max_iter=-1, subspace_minimization_iter=10,
-                  verbose=False, w=None, tol=1e-10):
+                  verbose=False, w=None, e=1e-10):
     if w is None:
         w = np.ones(len(points)) / len(points)
     else:
@@ -23,7 +23,7 @@ def pgd_optimizer(points, y, kkt_tol=1e-3, max_iter=-1, subspace_minimization_it
             status = 'KKT'
             break
 
-        w = subspace_minimize(grad, w, points, max_iter=subspace_minimization_iter, tol=tol)
+        w = subspace_minimize(grad, w, points, max_iter=subspace_minimization_iter, tol=e)
 
         if verbose:
             verbose_callback(count, max_iter, w, points, y)
