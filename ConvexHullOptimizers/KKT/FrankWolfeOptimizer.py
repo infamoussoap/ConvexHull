@@ -3,7 +3,7 @@ import sys
 
 from .KKTConditions import validate_kkt_conditions
 
-from .utils import verbose_callback
+from ..utils import verbose_callback
 
 
 def clip(x, min_val, max_val):

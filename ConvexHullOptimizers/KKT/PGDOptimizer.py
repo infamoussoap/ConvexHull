@@ -3,7 +3,7 @@ import sys
 
 from .KKTConditions import validate_kkt_conditions
 
-from .utils import verbose_callback
+from ..utils import verbose_callback
 
 
 def pgd_optimizer(points, y, kkt_tol=1e-3, max_iter=-1, subspace_minimization_iter=10,

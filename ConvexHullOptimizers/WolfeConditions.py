@@ -8,8 +8,8 @@ class WolfeConditions:
     def search(self, w, y, t0, t1, c1, c2, max_iter=100):
         g = self.grad(w, y)
 
-        w0 = self.step(w, grad, t0)
-        w1 = self.step(w, grad, t1)
+        w0 = self.step(w, g, t0)
+        w1 = self.step(w, g, t1)
 
         q0 = self.cost(w0, y)
         q1 = self.cost(w1, y)
@@ -18,11 +18,10 @@ class WolfeConditions:
 
         for i in range(max_iter):
             t_new = (t0 + t1) / 2
-            w_new = self.step(w, grad, t_new)
+            w_new = self.step(w, g, t_new)
             q_new = self.cost(w_new, y)
 
             raise NotImplementedError
-
 
     def cost(self, w, y):
         return np.sum((w @ self.points - y) ** 2)

@@ -3,7 +3,7 @@ import sys
 
 from .KKTConditions import validate_kkt_conditions
 
-from .utils import verbose_callback
+from ..utils import verbose_callback
 
 
 def squared_optimizer(points, y, kkt_tol=1e-3, max_iter=-1, verbose=False, w=None, reset_optimizer=100):
