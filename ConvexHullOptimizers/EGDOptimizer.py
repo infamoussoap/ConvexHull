@@ -26,10 +26,6 @@ def egd_optimizer(points, y, tol=1e-8, max_iter=-1, verbose=False, w=None):
         t_max = min(2 * (count + 1), 1000)
         learning_rate = search_method.search(w, y, t_max, grad, search_type='classical')
 
-        if learning_rate < 1e-7:  # No more learning to be done
-            status = 'Gradient'
-            break
-
         x = w * np.exp(-learning_rate * grad)
         w = x / np.sum(x)
 

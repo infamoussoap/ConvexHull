@@ -38,9 +38,6 @@ def frank_wolfe_optimizer(points, y, tol=1e-8, max_iter=-1, verbose=False, w=Non
         a = (oracle - w) @ points
         gamma = - (a @ b) / (a @ a)
 
-        if gamma < e:
-            break
-
         gamma = clip(gamma, 0, 1)
 
         w = (1 - gamma) * w + gamma * oracle
