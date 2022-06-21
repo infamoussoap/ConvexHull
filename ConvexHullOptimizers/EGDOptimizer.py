@@ -26,7 +26,8 @@ def egd_optimizer(points, y, tol=1e-8, max_iter=-1, verbose=False, w=None):
         t_max = min(2 * (count + 1), 1000)
         learning_rate = search_method.search(w, y, t_max, grad, search_type='classical')
 
-        x = w * np.exp(-learning_rate * grad)
+        z = -learning_rate * grad
+        x = w * np.exp(z - np.max(z))  # For numerical stability
         w = x / np.sum(x)
 
         if verbose:

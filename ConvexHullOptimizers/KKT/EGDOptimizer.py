@@ -31,7 +31,8 @@ def egd_optimizer(points, y, kkt_tol=1e-3, max_iter=-1, verbose=False, w=None):
             status = 'Gradient'
             break
 
-        x = w * np.exp(-learning_rate * grad)
+        z = -learning_rate * grad
+        x = w * np.exp(z - np.max(z))  # For numerical stability
         w = x / np.sum(x)
 
         if verbose:
