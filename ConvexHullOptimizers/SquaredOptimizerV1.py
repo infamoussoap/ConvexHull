@@ -24,8 +24,8 @@ def squared_optimizer(points, y, tol=1e-8, max_iter=-1, verbose=False, w=None, e
         cauchy_learning_rate = dw_dt @ grad / np.sum((dw_dt @ points) ** 2)
 
         non_active_set = w > e
-
-        max_learning_rate = 1 / (np.max(grad * non_active_set) - w @ grad)
+        max_learning_rate = 1 / (np.max(grad[non_active_set]) - w @ grad)
+        
         learning_rate = min(cauchy_learning_rate, max_learning_rate)
 
         w = w - learning_rate * dw_dt
