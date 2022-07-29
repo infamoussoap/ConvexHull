@@ -5,85 +5,46 @@ from .utils import verbose_callback
 from .Tape import Tape
 
 
-def squared_optimizer(points, y, tol=1e-8, max_iter=-1, verbose=False, w=None, reset_optimizer=100):
+def squared_optimizer(points, y, tol=1e-8, max_iter=-1, verbose=False, w=None, e=1e-10):
     if w is None:
         w = np.ones(len(points)) / len(points)
     else:
-        assert abs(np.sum(w) - 1) < 1e-10, "w must sum to 1"
+        assert abs(np.sum(w) - 1) < e, "w must sum to 1"
         assert len(w) == len(points), "Length of w must be the same length as the hull"
-
-    original_length = len(w)
-
-    current_iter = 0
-    non_active_set = np.arange(len(w))
-    status, distance, current_iter, w = _squared_optimizer(points, y, tol, current_iter, max_iter,
-                                                           verbose, w, reset_optimizer)
-
-    while status == 'reset':
-        non_zero_mask = w != 0
-        non_active_set = non_active_set[non_zero_mask]
-
-        w = w[non_zero_mask]
-        points = points[non_zero_mask]
-
-        status, distance, current_iter, w = _squared_optimizer(points, y, tol, current_iter, max_iter,
-                                                               verbose, w, reset_optimizer)
-
-    if verbose:
-        sys.stdout.write('\n')
-        sys.stdout.flush()
-
-    if len(w) < original_length:
-        w_values = w.copy()
-        w = np.zeros(original_length)
-        w[non_active_set] = w_values
-
-    return status, distance, current_iter + 1, w
-
-
-def _squared_optimizer(points, y, tol, current_iter, max_iter, verbose, w, reset_optimizer):
-    non_active_set = np.ones(len(w))
-    active_set_length = 0
-
-    tape = Tape(tol)
 
     status = 'Failed'
 
-    while (current_iter < max_iter or max_iter < 0) \
-            and (active_set_length < reset_optimizer or reset_optimizer < 0):
+    tape = Tape(tol)
 
+    count = 0
+    while count < max_iter or max_iter < 0:
         grad = (w @ points - y) @ points.T
 
         dw_dt = w * (grad - w @ grad)
         cauchy_learning_rate = dw_dt @ grad / np.sum((dw_dt @ points) ** 2)
 
-        masked_grad = grad * non_active_set
-        i = np.argmax(masked_grad)
-
-        max_learning_rate = 1 / (masked_grad[i] - w @ grad)
+        non_active_set = w > e
+        max_learning_rate = 1 / (np.max(grad[non_active_set]) - w @ grad)
+        
         learning_rate = min(cauchy_learning_rate, max_learning_rate)
 
         w = w - learning_rate * dw_dt
-
-        if learning_rate == max_learning_rate:
-            non_active_set[i] = 0
-            w[i] = 0
-            active_set_length += 1
-
+        w[~non_active_set] = 0.0
         w = w / np.sum(w)
 
         if verbose:
-            verbose_callback(current_iter, max_iter, w, points, y)
+            verbose_callback(count, max_iter, w, points, y)
 
         if tape.watch(w):
             status = 'TOL'
             break
 
-        current_iter += 1
+        count += 1
 
     distance = np.sum((w @ points - y) ** 2)
 
-    if active_set_length == reset_optimizer:
-        status = 'reset'
+    if verbose:
+        sys.stdout.write('\n')
+        sys.stdout.flush()
 
-    return status, distance, current_iter, w
+    return status, distance, count + 1, w
