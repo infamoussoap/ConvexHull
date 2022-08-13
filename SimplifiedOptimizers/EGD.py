@@ -2,11 +2,11 @@ import numpy as np
 import sys
 
 from .BisectionMethod import BisectionMethod
-
+from .KKTConditions import validate_kkt_conditions
 from .utils import verbose_callback
 
 
-def egd_optimizer(X, y, tol=1e-8, max_iter=-1, verbose=False, w=None):
+def egd_optimizer(X, y, kkt_tol=1e-4, max_iter=-1, verbose=False, w=None, e=1e-10):
     if w is None:
         w = np.ones(len(X)) / len(X)
     else:
@@ -18,6 +18,9 @@ def egd_optimizer(X, y, tol=1e-8, max_iter=-1, verbose=False, w=None):
     count = 0
     while count < max_iter or max_iter < 0:
         grad = (w @ X - y) @ X.T
+
+        if validate_kkt_conditions(w, grad, tol=kkt_tol, e=e):
+            break
 
         t_max = min(2 * (count + 1), 1000)
         learning_rate = search_method.search(w, y, t_max, grad, search_type='classical')
@@ -31,12 +34,9 @@ def egd_optimizer(X, y, tol=1e-8, max_iter=-1, verbose=False, w=None):
         if verbose:
             verbose_callback(count, max_iter, w, X, y)
 
-        distance = np.sum((w @ X - y) ** 2) / 2
-        if distance < tol:
-            break
-
     if verbose:
         sys.stdout.write('\n')
         sys.stdout.flush()
 
+    distance = np.sum((w @ X - y) ** 2) / 2
     return distance, count + 1, w

@@ -1,10 +1,11 @@
 import numpy as np
 import sys
 
+from .KKTConditions import validate_kkt_conditions
 from .utils import verbose_callback
 
 
-def pairwise_frank_wolfe_optimizer(X, y, tol=1e-8, max_iter=10, verbose=False, w=None, e=1e-10):
+def pairwise_frank_wolfe_optimizer(X, y, kkt_tol=1e-4, max_iter=10, verbose=False, w=None, e=1e-10):
     if w is None:
         w = np.zeros(len(X))
         w[0] = 1
@@ -15,6 +16,9 @@ def pairwise_frank_wolfe_optimizer(X, y, tol=1e-8, max_iter=10, verbose=False, w
     count = 0
     while count < max_iter or max_iter < 0:
         grad = (w @ X - y) @ X.T
+
+        if validate_kkt_conditions(w, grad, tol=kkt_tol, e=e):
+            break
 
         s_index = np.argmin(grad)
 
@@ -41,12 +45,9 @@ def pairwise_frank_wolfe_optimizer(X, y, tol=1e-8, max_iter=10, verbose=False, w
         if verbose:
             verbose_callback(count, max_iter, w, X, y)
 
-        distance = np.sum((w @ X - y) ** 2) / 2
-        if distance < tol:
-            break
-
     if verbose:
         sys.stdout.write('\n')
         sys.stdout.flush()
 
+    distance = np.sum((w @ X - y) ** 2) / 2
     return distance, count + 1, w
