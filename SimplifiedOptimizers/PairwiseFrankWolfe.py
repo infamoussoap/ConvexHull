@@ -5,8 +5,10 @@ from .StoppingCondition import validate_stopping_conditions
 from .utils import verbose_callback
 
 
-def pairwise_frank_wolfe_optimizer(X, y, max_iter=-1, verbose=False, w=None, tol=1e-6, e=1e-10,
-                                   stopping_type="TOL"):
+def frank_wolfe_optimizer(X, y, max_iter=-1, verbose=False, w=None, tol=1e-6, e=1e-10,
+                          stopping_type="TOL"):
+    """ This implements the pairwise frank-wolfe algorithm """
+
     if w is None:
         w = np.zeros(len(X))
         w[0] = 1
