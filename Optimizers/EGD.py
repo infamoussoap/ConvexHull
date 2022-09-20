@@ -27,6 +27,9 @@ def egd_optimizer(X, y, max_iter=-1, verbose=False, w=None, tol=1e-6, e=1e-10,
         x = w * np.exp(z - np.max(z))  # For numerical stability
         w = x / np.sum(x)
 
+        w[w < e] = 0
+        w = w / np.sum(w)
+
         count += 1
 
         if verbose:
@@ -38,9 +41,6 @@ def egd_optimizer(X, y, max_iter=-1, verbose=False, w=None, tol=1e-6, e=1e-10,
     if verbose:
         sys.stdout.write('\n')
         sys.stdout.flush()
-
-    w[w < e] = 0
-    w = w / np.sum(w)
 
     distance = np.sum((w @ X - y) ** 2) / 2
     return distance, count + 1, w
