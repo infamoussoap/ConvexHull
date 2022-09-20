@@ -3,14 +3,7 @@ import sys
 
 from .StoppingCondition import validate_stopping_conditions
 from .utils import verbose_callback
-
-
-def clip(x, min_val, max_val):
-    if x >= max_val:
-        return max_val
-    elif x <= min_val:
-        return min_val
-    return x
+from .utils import clip
 
 
 def cauchy_simplex_optimizer(X, y, max_iter=-1, verbose=False, w=None, tol=1e-6, e=1e-10,
