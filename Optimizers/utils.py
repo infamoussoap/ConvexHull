@@ -26,3 +26,11 @@ def project_onto_standard_simplex(y):
             break
 
     return np.maximum(0, y - t)
+
+
+def clip(val, min_val, max_val):
+    if val < min_val:
+        return min_val
+    elif val > max_val:
+        return max_val
+    return val
