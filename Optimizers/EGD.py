@@ -20,6 +20,7 @@ def egd_optimizer(X, y, max_iter=-1, verbose=False, w=None, tol=1e-6, e=1e-10,
     while count < max_iter or max_iter < 0:
         grad = (w @ X - y) @ X.T
 
+        # The limit is relative to the gradient for numerical stability
         t_max = min(2 * (count + 1), abs(100 / np.max(grad)))
         learning_rate = search_method.search(w, y, t_max, grad, search_type='classical')
 
