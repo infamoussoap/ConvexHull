@@ -2,3 +2,4 @@ ignore_files
 unit_tests
 .ipynb_checkpoints
 __pycache__/
+*.csv
