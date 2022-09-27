@@ -28,23 +28,7 @@ def frank_wolfe_optimizer(X, y, max_iter=-1, verbose=False, w=None, tol=1e-6, e=
 
         learning_rate = clip(cauchy_learning_rate, 0, 1)
 
-        non_active_set = w > e
-        v_masked_index = np.argmax(grad[non_active_set])
-        v_index = np.argwhere(non_active_set).flatten()[v_masked_index]
-
-        alpha = w[v_index]
-
-        # We are taking mass away from the v and putting it into s
-        d_X = alpha * (X[s_index] - X[v_index])
-        learning_rate = - (w @ X - y) @ d_X / (d_X @ d_X)
-
-        if learning_rate < e:
-            break
-
-        learning_rate = min(learning_rate, 1)
-
-        w[s_index] += learning_rate * alpha
-        w[v_index] -= learning_rate * alpha
+        w = (1 - learning_rate) * w - learning_rate * oracle
 
         count += 1
 
