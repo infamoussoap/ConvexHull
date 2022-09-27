@@ -28,9 +28,11 @@ def frank_wolfe_optimizer(X, y, max_iter=-1, verbose=False, w=None, tol=1e-6, e=
 
         learning_rate = clip(cauchy_learning_rate, 0, 1)
 
-        w = (1 - learning_rate) * w - learning_rate * oracle
+        w = (1 - learning_rate) * w + learning_rate * oracle
 
         count += 1
+
+        oracle[s_index] = 0
 
         if verbose:
             verbose_callback(count, max_iter, w, X, y)
