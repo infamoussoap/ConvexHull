@@ -40,6 +40,9 @@ def frank_wolfe_optimizer(X, y, max_iter=-1, verbose=False, w=None, tol=1e-6, e=
         if validate_stopping_conditions(w, X, y, tol=tol, e=e, stopping_type=stopping_type):
             break
 
+        if learning_rate < e:
+            break
+
     if verbose:
         sys.stdout.write('\n')
         sys.stdout.flush()
