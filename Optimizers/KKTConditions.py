@@ -24,7 +24,7 @@ def check_kkt_conditions_for_non_active_set(non_active_grad, tol=1e-3):
         # This implies w1,...,wn=0 which violates the KKT condition dL/db = 0
         return False, 0
 
-    b = np.mean(non_active_grad) # The Lagrange Multiplier
+    b = np.median(non_active_grad) # The Lagrange Multiplier
     max_, min_ = np.max(non_active_grad), np.min(non_active_grad)
     return abs(max_ - min_) < tol, -b
 
