@@ -53,9 +53,6 @@ def _check_indices(w, grad):
 
 
 def _cauchy_simplex(X, y, w, grad, e=1e-10):
-    if e is None:
-        return _cauchy_simplex_pure(X, y, w, grad)
-
     dw_dt = w * (grad - w @ grad)
     cauchy_learning_rate = dw_dt @ grad / np.sum((dw_dt @ X) ** 2)
 
