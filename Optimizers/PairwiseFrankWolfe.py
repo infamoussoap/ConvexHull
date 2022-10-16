@@ -7,7 +7,15 @@ from .utils import verbose_callback
 
 def pairwise_frank_wolfe_optimizer(X, y, max_iter=-1, verbose=False, w=None, tol=1e-6, e=1e-10,
                           stopping_type="TOL"):
-    """ This implements the pairwise frank-wolfe algorithm """
+    """ Returns
+        -------
+        float
+            The distance to the hull of the result
+        int
+            The number of steps the optimizer has taken
+        np.array
+            The result
+    """
 
     if w is None:
         w = np.zeros(len(X))
