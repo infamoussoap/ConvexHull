@@ -57,4 +57,4 @@ def frank_wolfe_optimizer(X, y, max_iter=-1, verbose=False, w=None, tol=1e-6, e=
         sys.stdout.flush()
 
     distance = np.sum((w @ X - y) ** 2) / 2
-    return distance, count + 1, w
+    return distance, count, w

@@ -17,7 +17,7 @@ def cauchy_simplex_optimizer(X, y, max_iter=-1, verbose=False, w=None, tol=1e-6,
         np.array
             The result
     """
-                             
+
     if w is None:
         w = np.ones(len(X)) / len(X)
     else:
@@ -56,4 +56,4 @@ def cauchy_simplex_optimizer(X, y, max_iter=-1, verbose=False, w=None, tol=1e-6,
         sys.stdout.flush()
 
     distance = np.sum((w @ X - y) ** 2) / 2
-    return distance, count + 1, w
+    return distance, count, w
