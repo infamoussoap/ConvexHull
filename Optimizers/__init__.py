@@ -11,3 +11,6 @@ from .CauchySimplex import cauchy_simplex_optimizer as cs_optimizer
 
 from .CauchySimplexV2 import cauchy_simplex_v2_optimizer
 from .CauchySimplexV2 import cauchy_simplex_v2_optimizer as cs_v2_optimizer
+
+from .CauchySimplexV3 import cauchy_simplex_v3_optimizer
+from .CauchySimplexV3 import cauchy_simplex_v3_optimizer as cs_v3_optimizer
