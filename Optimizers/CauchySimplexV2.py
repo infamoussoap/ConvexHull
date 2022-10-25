@@ -8,7 +8,10 @@ from .utils import clip
 
 def cauchy_simplex_v2_optimizer(X, y, max_iter=-1, verbose=False, w=None, tol=1e-6, e=1e-10,
                                 stopping_type="TOL"):
-    """ Returns
+    """ Version 2 will perform a frank-wolfe optimisation if the stability condition is
+        not satisfied
+
+        Returns
         -------
         float
             The distance to the hull of the result
