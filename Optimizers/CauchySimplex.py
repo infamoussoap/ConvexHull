@@ -7,7 +7,7 @@ from .utils import clip
 
 
 def cauchy_simplex_optimizer(X, y, max_iter=-1, verbose=False, w=None, tol=1e-6, e=1e-10,
-                             stopping_type="TOL"):
+                             stopping_type="TOL", clipped_max_learning_rate=False):
     """ Returns
         -------
         float
@@ -33,7 +33,9 @@ def cauchy_simplex_optimizer(X, y, max_iter=-1, verbose=False, w=None, tol=1e-6,
 
         non_active_set = w > e
         max_learning_rate = 1 / (np.max(grad[non_active_set]) - w @ grad)
-        max_learning_rate = min(1, max_learning_rate)
+
+        if clipped_max_learning_rate:
+            max_learning_rate = min(1, max_learning_rate)
 
         learning_rate = clip(cauchy_learning_rate, 0, max_learning_rate)
 
