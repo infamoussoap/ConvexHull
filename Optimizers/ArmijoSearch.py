@@ -54,7 +54,7 @@ class ArmijoSearch(ABC):
             count += 1
 
         if count == max_iter:
-            if f0 < self.f(x, step_size):
+            if f0 < self.f(x_new):
                 return 0
 
         return step_size
