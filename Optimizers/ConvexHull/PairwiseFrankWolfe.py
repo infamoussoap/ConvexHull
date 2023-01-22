@@ -6,9 +6,9 @@ from Optimizers.utils import clip
 
 
 class PairwiseFrankWolfe(ConvexHull, ArmijoSearch, Optimizer):
-    def __init__(self, X, y, e=1e-10):
+    def __init__(self, X, y, tol=1e-10):
         ConvexHull.__init__(self, X, y)
-        self.e = e
+        self.tol = tol
 
     def update(self, x, d, step_size):
         s_index, v_index = d
@@ -24,7 +24,7 @@ class PairwiseFrankWolfe(ConvexHull, ArmijoSearch, Optimizer):
     def search(self, x, step_size=None, c1=1e-4, c2=0.5, max_iter=100):
         grad = self.f(x, grad=True)
 
-        s_index, v_index = self.frank_wolfe_pair(grad, x, e=self.e)
+        s_index, v_index = self.frank_wolfe_pair(grad, x, tol=self.tol)
 
         alpha = x[v_index]
         d_X = alpha * (self.X[s_index] - self.X[v_index])
@@ -35,10 +35,10 @@ class PairwiseFrankWolfe(ConvexHull, ArmijoSearch, Optimizer):
         return self.update(x, [s_index, v_index], step_size)
 
     @staticmethod
-    def frank_wolfe_pair(grad, w, e=1e-10):
+    def frank_wolfe_pair(grad, w, tol=1e-10):
         s_index = np.argmin(grad)
 
-        non_active_set = w > e
+        non_active_set = w > tol
         v_masked_index = np.argmax(grad[non_active_set])
         v_index = np.argwhere(non_active_set).flatten()[v_masked_index]
 
