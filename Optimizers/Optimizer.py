@@ -8,5 +8,5 @@ class Optimizer(ABC):
         pass
 
     @abstractmethod
-    def search(x, step_size=1, c1=1e-4, c2=0.5, max_iter=100):
+    def search(self, x, step_size=1, c1=1e-4, c2=0.5, max_iter=100):
         pass
