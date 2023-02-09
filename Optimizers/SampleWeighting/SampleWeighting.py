@@ -23,7 +23,7 @@ class SampleWeighting:
         f = self.target_distribution(self.integration_points)
 
         if grad:
-            return (self.dx * (np.log(rho / f) + f)) @ self.rho(w, grad=True)
+            return (self.dx * (np.log(rho / f) + 1)) @ self.rho(w, grad=True)
 
         return (rho * np.log(rho / f)) @ self.dx
 
@@ -36,7 +36,7 @@ class SampleWeighting:
         x = self.integration_points
 
         if grad:
-            C = -1 / (self.n * (self.e ** 2))
+            C = - 1 / (self.n * (self.e ** 2))
             return C * self.normal((x[:, None] - X[None, :]) / self.e, grad=True) @ self.data
 
-        return np.mean(self.normal((x - X[:, None]) / self.e), axis=0) / self.e
+        return np.mean(self.normal((x[:, None] - X[None, :]) / self.e), axis=1) / self.e
