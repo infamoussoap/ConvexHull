@@ -20,12 +20,14 @@ class SampleWeighting:
 
     def f(self, w, grad=False):
         rho = self.rho(w)
+        rho_grad = self.rho(w, grad=True) if grad else None
         f = self.target_distribution(self.integration_points)
+        dx = self.dx
 
         if grad:
-            return (self.dx * (np.log(rho / f) + 1)) @ self.rho(w, grad=True)
+            return (dx * (self.safe_log(rho / f) + 1)) @ rho_grad
 
-        return (rho * np.log(rho / f)) @ self.dx
+        return (rho * self.safe_log(rho / f)) @ dx
 
     def __call__(self, w, grad=False):
         return self.f(w, grad=grad)
@@ -40,3 +42,15 @@ class SampleWeighting:
             return C * self.normal((x[:, None] - X[None, :]) / self.e, grad=True) @ self.data
 
         return np.mean(self.normal((x[:, None] - X[None, :]) / self.e), axis=1) / self.e
+
+    @staticmethod
+    def safe_log(x):
+        """ x is assumed to be np.ndarray """
+        mask = x > 0
+        if np.all(mask):
+            return np.log(x)
+
+        out = np.zeros_like(x)
+        out[mask] = np.log(x[mask])
+
+        return out
