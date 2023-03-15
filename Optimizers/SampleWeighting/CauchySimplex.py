@@ -15,11 +15,12 @@ class CauchySimplex(SampleWeighting, ArmijoSearch, Optimizer):
 
         return z / np.sum(z)
 
-    def search(self, x, step_size=None, c1=1e-4, c2=0.5, max_iter=100):
+    def search(self, x, step_size=None, c1=1e-4, c2=0.5, max_iter=100, gamma=1):
         grad = self.f(x, grad=True)
         d = x * (grad - grad @ x)
 
         max_step_size = self.max_step_size(x, grad, tol=self.tol) if step_size is None else step_size
+        max_step_size = gamma * max_step_size
 
         step_size = self.backtracking_armijo_line_search(x, d, max_step_size,
                                                          c1=c1, c2=c2, max_iter=max_iter)
