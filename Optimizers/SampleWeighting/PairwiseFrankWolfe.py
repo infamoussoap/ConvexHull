@@ -7,7 +7,7 @@ from Optimizers.utils import clip
 
 class PairwiseFrankWolfe(SampleWeighting, ArmijoSearch, Optimizer):
     def __init__(self, data, integration_points, target_distribution, e=0.01, tol=1e-10):
-        SampleWeighting.__init__(self, data, integration_points, target_distribution, e=0.01)
+        SampleWeighting.__init__(self, data, integration_points, target_distribution, e=e)
         self.tol = tol
 
     def update(self, x, d, step_size):
