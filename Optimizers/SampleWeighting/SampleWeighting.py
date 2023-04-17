@@ -1,10 +1,10 @@
 import numpy as np
 
-from .Distributions import UnitNormal
+from .Distributions import TruncatedUnitNormal
 
 
 class SampleWeighting:
-    normal = UnitNormal()
+    truncated_normal = TruncatedUnitNormal()
 
     def __init__(self, data, integration_points, target_distribution, e=0.01):
         self.n, self.d = data.shape
@@ -39,9 +39,9 @@ class SampleWeighting:
 
         if grad:
             C = - 1 / (self.n * (self.e ** 2))
-            return C * self.normal((x[:, None] - X[None, :]) / self.e, grad=True) @ self.data
+            return C * self.truncated_normal((x[:, None] - X[None, :]) / self.e, grad=True) @ self.data
 
-        return np.mean(self.normal((x[:, None] - X[None, :]) / self.e), axis=1) / self.e
+        return np.mean(self.truncated_normal((x[:, None] - X[None, :]) / self.e), axis=1) / self.e
 
     @staticmethod
     def safe_log(x):
