@@ -2,12 +2,15 @@ import numpy as np
 
 from Optimizers import ArmijoSearch, Optimizer
 from .SampleWeighting import SampleWeighting
-from Optimizers.utils import clip
+
+from .Distributions import TruncatedUnitNormal
 
 
 class PairwiseFrankWolfe(SampleWeighting, ArmijoSearch, Optimizer):
-    def __init__(self, data, integration_points, target_distribution, e=0.01, tol=1e-10):
-        SampleWeighting.__init__(self, data, integration_points, target_distribution, e=e)
+    def __init__(self, data, integration_points, target_distribution, base_distribution=TruncatedUnitNormal(),
+                 e=0.01, tol=1e-10):
+        SampleWeighting.__init__(self, data, integration_points, target_distribution,
+                                 base_distribution=base_distribution, e=e)
         self.tol = tol
 
     def update(self, x, d, step_size):

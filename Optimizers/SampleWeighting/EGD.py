@@ -3,10 +3,13 @@ import numpy as np
 from Optimizers import ArmijoSearch, Optimizer
 from .SampleWeighting import SampleWeighting
 
+from .Distributions import TruncatedUnitNormal
+
 
 class EGD(SampleWeighting, ArmijoSearch, Optimizer):
     def __init__(self, data, integration_points, target_distribution, e=0.01):
-        SampleWeighting.__init__(self, data, integration_points, target_distribution, e=e)
+        SampleWeighting.__init__(self, data, integration_points, target_distribution,
+                                 base_distribution=TruncatedUnitNormal(), e=e)
 
     def update(self, x, d, step_size):
         z = x * np.exp(-step_size * d)
