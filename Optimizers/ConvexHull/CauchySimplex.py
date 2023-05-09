@@ -101,4 +101,6 @@ class CauchySimplex(ConvexHull, ArmijoSearch, Optimizer):
             float
         """
         support = x > tol
-        return 1 / (np.max(grad[support]) - x @ grad)
+
+        diff = np.max(grad[support]) - x @ grad
+        return 1 / diff if diff > 1e-6 else 1e6
