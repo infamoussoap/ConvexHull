@@ -1,11 +1,9 @@
 import numpy as np
 
-from .Distributions import TruncatedUnitNormal
-
 
 class SampleWeighting:
     def __init__(self, data, integration_points, target_distribution, base_distribution, e=0.01):
-        self.n, self.d = data.shape
+        self.num_students = len(data)
 
         self.data = data
 
@@ -38,7 +36,7 @@ class SampleWeighting:
         x = self.integration_points
 
         if grad:
-            C = - 1 / (self.n * (self.e ** 2))
+            C = - 1 / (self.num_students * (self.e ** 2))
             return C * self.base_distribution(x, X, self.e, grad=True) @ self.data
 
         return np.mean(self.base_distribution(x, X, self.e), axis=1) / self.e
