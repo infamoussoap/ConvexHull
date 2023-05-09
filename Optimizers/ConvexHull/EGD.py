@@ -46,7 +46,7 @@ class EGD(ConvexHull, ArmijoSearch, Optimizer):
         return z / np.sum(z)
 
     def search(self, x, step_size=1, c1=1e-4, c2=0.5, max_iter=100):
-        """ Perform a step using the Cauchy-Simplex scheme using the optimal step size
+        """ Perform a step using the EGD scheme using the optimal step size
 
             Parameters
             ----------
