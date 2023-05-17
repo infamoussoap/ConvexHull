@@ -5,8 +5,8 @@ Our other [repository](https://github.com/infamoussoap/UniversalPortfolio) conta
 
 ## Projection onto a Convex Hull
 Let $(x_i)_{1\leq i \leq N}$ be a set of points with $x_i\in\mathbb{R}^d$. For some $y\in\mathbb{R}^d$, projection onto a convex hull involves solving the minimization problem
-$$\min_w \|\|wX - y \|\|^2\quad \text{where}\quad \sum_i w_i = 1\ \text{and}\ w_i\geq0.$$
-This is also known as simplex-constrained regression.
+$$\min_w \|\|wX - y \|\|^2\quad \text{where}\quad \sum_i w_i = 1\ \text{and}\ w_i\geq0,$$
+and $X=[x_1,\ldots, x_N]^T$ is a $N\times d$ matrix. This is also known as simplex-constrained regression.
 
 While quadratic programs can solve this problem, they are often slow when $n$ or $d$ is big. In our code, we propose a new iteration algorithm to solve this problem.
 
