@@ -48,6 +48,9 @@ class CauchySimplex(ConvexHull, ArmijoSearch, Optimizer):
             (n, ) np.ndarray
                 The point after the step has been taken
         """
+        if np.sum(x > 0) == 1:
+            return x
+
         z = x - step_size * d
         z[x < self.tol] = 0
 
