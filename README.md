@@ -3,6 +3,10 @@ This repository contains the code for our paper [Convex optimization over a prob
 
 Our other [repository](https://github.com/infamoussoap/UniversalPortfolio) contains the code for <ins>Universal Portfolios</ins>.
 
+The code for the actual experiments are on Google Colab and can be found 
+[here](https://colab.research.google.com/drive/1CqzYY0ojo1EnDCa21NnqKJYHgEfSXOAR?usp=sharing) for projection onto the convex hull, 
+and [here](https://colab.research.google.com/drive/1cnJ28IX1dCZdM3nRDZwkRK0Zixm7yMrE?usp=sharing) for optimal question weighting.
+
 ## Projection onto a Convex Hull
 Let $(x_i)_{1\leq i \leq N}$ be a set of points with $x_i\in\mathbb{R}^d$. For some $y\in\mathbb{R}^d$, projection onto a convex hull involves solving the minimization problem
 $$\min_w \|\|wX - y \|\|^2\quad \text{where}\quad \sum_i w_i = 1\ \text{and}\ w_i\geq0,$$
